@@ -1,3 +1,5 @@
+*.DS_Store
+
 # Python-generated files
 __pycache__/
 *.py[oc]
@@ -11,3 +13,6 @@ wheels/
 
 .env*
 !.env.sample
+
+features/document_loaders/.sample_files
+
