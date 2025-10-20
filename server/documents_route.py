@@ -36,8 +36,6 @@ async def documents_route(req: DocumentLoadRequest):
         for number, doc in enumerate(documents)
     ]
 
-    print("result: ", result)
-
     return DocumentLoadResponse(documents=result)
 
 
@@ -57,7 +55,6 @@ async def _download_file(file_url: HttpUrl) -> str:
 
             import aiofiles
 
-            print("file_url.path: ", file_url.path)
             file_name = unquote(os.path.basename(file_url.path or ""))
             file_path = os.path.join("./downloads", file_name)
 
