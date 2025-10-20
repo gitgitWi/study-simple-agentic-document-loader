@@ -1,0 +1,21 @@
+[project]
+name = "document-loaders"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard-no-fastapi-cloud-cli]>=0.119.0",
+    "langchain>=1.0.0",
+    "langgraph>=1.0.0",
+    "olefile>=0.47",
+    "pydantic>=2.12.3",
+]
+
+
+[tool.taskipy.tasks]
+# `uv run task dev`
+dev = "uvicorn server:app --host localhost --port 8000 --reload"
+
+[dependency-groups]
+dev = ["taskipy>=1.14.1"]
