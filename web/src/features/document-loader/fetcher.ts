@@ -1,10 +1,12 @@
 import type { AllowedExtension } from '~/features/files';
 
+export type DocumentLoaded = {
+  page_content: string;
+  page_number: number;
+};
+
 type DocumentLoadResponse = {
-  documents: {
-    page_content: string;
-    page_number: number;
-  }[];
+  documents: DocumentLoaded[];
 };
 
 export const fetchLoadDocuments = async ({
