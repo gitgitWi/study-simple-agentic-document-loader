@@ -5,6 +5,7 @@
       "web/**/*.tsx",
       "web/**/*.ts",
       "web/**/*.css",
+      "web/**/*.json",
       "!web/node_modules/*",
       "!web/dist/*",
       "!web/public/*"
@@ -22,6 +23,14 @@
       "quoteStyle": "single",
       "semicolons": "always",
       "trailingCommas": "es5"
+    }
+  },
+  "json": {
+    "formatter": {
+      "enabled": true,
+      "indentStyle": "space",
+      "indentWidth": 2,
+      "lineEnding": "lf"
     }
   },
   "linter": {
