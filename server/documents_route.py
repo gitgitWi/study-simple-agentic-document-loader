@@ -2,15 +2,29 @@ from typing import List
 
 import httpx
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel, Field, HttpUrl
+from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 from features.document_loaders import HWPLoader
+from features.document_loaders.file_extensions import (
+    is_valid_extension,
+)
 
 documents_router = APIRouter()
 
 
 class DocumentLoadRequest(BaseModel):
     file_url: HttpUrl | str = Field(..., description="File path")
+    file_extension: str = Field(
+        ...,
+        description="File extension",
+    )
+
+    @field_validator("file_extension")
+    @classmethod
+    def validate_file_extension(cls, v: str) -> str:
+        if not is_valid_extension(v):
+            raise ValueError(f"Invalid file extension: .{v}")
+        return v
 
 
 class LoadedDocument(BaseModel):
