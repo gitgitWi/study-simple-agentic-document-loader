@@ -4,23 +4,35 @@ import {
   type MouseEventHandler,
   type SubmitEventHandler,
 } from 'preact';
-import type { PropsWithChildren } from 'preact/compat';
+import type {
+  Dispatch,
+  PropsWithChildren,
+  SetStateAction,
+} from 'preact/compat';
 import { useCallback, useContext, useRef, useState } from 'preact/hooks';
+import {
+  type DocumentLoaded,
+  fetchLoadDocuments,
+} from '~/features/document-loader';
 import { cn } from '~/utils/class-names';
+import { convertSize } from './convert-size';
 import { fetchGetSasUrl, fetchUploadFile } from './fetcher';
 import type { AllowedExtension } from './types';
 
-export type AdjustedFile = {
+export type { AllowedExtension };
+
+export type FileLoaded = {
   name: string;
   size: number;
   sizeDisplay: string;
   type: AllowedExtension;
   url: string;
+  documents: DocumentLoaded[];
 };
 
 const FilesContext = createContext<{
-  files: AdjustedFile[];
-  setFiles: (files: AdjustedFile[]) => void;
+  files: FileLoaded[];
+  setFiles: Dispatch<SetStateAction<FileLoaded[]>>;
 }>({
   files: [],
   setFiles: () => {},
@@ -37,7 +49,8 @@ const useFilesContext = () => {
 };
 
 function FilesContextProvider({ children }: PropsWithChildren) {
-  const [files, setFiles] = useState<AdjustedFile[]>([]);
+  // TODO: zustand persist
+  const [files, setFiles] = useState<FileLoaded[]>([]);
 
   return (
     <FilesContext.Provider value={{ files, setFiles }}>
@@ -72,14 +85,28 @@ function FileUpload() {
       const fileExtension = file.name.split('.').pop()?.toLowerCase();
       if (!fileExtension) return;
 
-      const { upload_url: uploadUrl = '', download_url: downloadUrl = '' } =
+      const { upload_url: uploadUrl = '', download_url: fileUrl = '' } =
         (await fetchGetSasUrl(fileExtension as AllowedExtension)) ?? {};
-      if (!uploadUrl || !downloadUrl) return;
+      if (!uploadUrl || !fileUrl) return;
 
       const isSuccess = await fetchUploadFile(file, uploadUrl);
       if (!isSuccess) return;
 
-      // setFiles((prev) => [...prev, { name: file.name, size: file.size, sizeDisplay: file.size.toString(), type: file.type as unknown as AllowedExtension, url: sasUrl }]);
+      const { documents = [] } = (await fetchLoadDocuments({
+        fileUrl,
+        fileExtension: fileExtension as AllowedExtension,
+      })) ?? { documents: [] };
+
+      setFiles((prev) =>
+        prev.concat({
+          name: file.name,
+          size: file.size,
+          sizeDisplay: convertSize(file.size),
+          type: fileExtension as AllowedExtension,
+          url: fileUrl,
+          documents,
+        } as FileLoaded)
+      );
     },
     [inputRef]
   );
