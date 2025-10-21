@@ -1,0 +1,17 @@
+export type AllowedExtension =
+  | 'pdf'
+  | 'docx'
+  | 'doc'
+  | 'txt'
+  | 'csv'
+  | 'xls'
+  | 'xlsx'
+  | 'ppt'
+  | 'pptx'
+  | 'hwp'
+  | 'hwpx'
+  | 'jpg'
+  | 'jpeg'
+  | 'png'
+  | 'gif'
+  | 'webp';
