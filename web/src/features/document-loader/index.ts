@@ -1,0 +1,1 @@
+export { fetchLoadDocuments } from './fetcher';
