@@ -6,7 +6,7 @@ type GetSASUrlResponse = {
 };
 
 export const fetchGetSasUrl = async (fileExtension: AllowedExtension) => {
-  const apiPath = '/api/files/sas-url';
+  const apiPath = '/api/v1/files/sas-url';
   const response = await fetch(apiPath, {
     method: 'POST',
     headers: {
