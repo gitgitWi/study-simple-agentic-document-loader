@@ -1,6 +1,7 @@
 from fastapi import APIRouter, FastAPI
 
 from .documents_route import router as documents_router
+from .statics_route import static_files
 
 api_router = APIRouter(prefix="/api")
 api_router.include_router(documents_router)
@@ -14,3 +15,6 @@ app = FastAPI(
 
 
 app.include_router(api_router)
+
+
+app.mount("/", static_files, name="web")
