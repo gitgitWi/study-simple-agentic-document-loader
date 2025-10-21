@@ -7,12 +7,14 @@ import {
 import type { PropsWithChildren } from 'preact/compat';
 import { useCallback, useContext, useRef, useState } from 'preact/hooks';
 import { cn } from '~/utils/class-names';
+import { fetchGetSasUrl, fetchUploadFile } from './fetcher';
+import type { AllowedExtension } from './types';
 
 export type AdjustedFile = {
   name: string;
   size: number;
   sizeDisplay: string;
-  type: string;
+  type: AllowedExtension;
   url: string;
 };
 
@@ -63,16 +65,21 @@ function FileUpload() {
   );
 
   const handleChange = useCallback<InputEventHandler<HTMLInputElement>>(
-    (e) => {
+    async (e) => {
       const file = e.currentTarget.files?.[0] as File;
-      if (file) {
-        console.log('file: ', file);
-        // TODO: get sas url from server
+      if (!file) return;
 
-        // TODO: upload file to storage
+      const fileExtension = file.name.split('.').pop()?.toLowerCase();
+      if (!fileExtension) return;
 
-        // TODO: add file to files state
-      }
+      const { upload_url: uploadUrl = '', download_url: downloadUrl = '' } =
+        (await fetchGetSasUrl(fileExtension as AllowedExtension)) ?? {};
+      if (!uploadUrl || !downloadUrl) return;
+
+      const isSuccess = await fetchUploadFile(file, uploadUrl);
+      if (!isSuccess) return;
+
+      // setFiles((prev) => [...prev, { name: file.name, size: file.size, sizeDisplay: file.size.toString(), type: file.type as unknown as AllowedExtension, url: sasUrl }]);
     },
     [inputRef]
   );
