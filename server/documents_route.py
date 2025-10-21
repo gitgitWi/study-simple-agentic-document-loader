@@ -6,6 +6,7 @@ from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 from features.document_loaders import HWPLoader
 from features.document_loaders.file_extensions import (
+    AllowedExtension,
     is_valid_extension,
 )
 
@@ -42,7 +43,15 @@ async def documents_route(req: DocumentLoadRequest):
     if not local_file_path or len(local_file_path) == 0:
         raise HTTPException(status_code=400, detail="Invalid file URL")
 
-    loader = HWPLoader(local_file_path)
+    match req.file_extension:
+        case AllowedExtension.HWP:
+            loader = HWPLoader(local_file_path)
+        case _:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Not Implemented: .{req.file_extension}",
+            )
+
     documents = await loader.aload()
 
     result = [
@@ -84,7 +93,7 @@ async def _download_file(file_url: HttpUrl) -> str:
 
             return file_path
 
-        except httpx.HTTPStatusError as e:
+        except httpx.HTTPStatusError:
             raise HTTPException(
                 status_code=500,
                 detail=f"Failed to download file: {file_name}",
