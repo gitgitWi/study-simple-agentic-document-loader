@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field, HttpUrl
 
 from features.document_loaders import HWPLoader
 
-router = APIRouter()
+documents_router = APIRouter()
 
 
 class DocumentLoadRequest(BaseModel):
@@ -22,7 +22,7 @@ class DocumentLoadResponse(BaseModel):
     documents: List[LoadedDocument]
 
 
-@router.post("/documents", response_model=DocumentLoadResponse)
+@documents_router.post("/documents", response_model=DocumentLoadResponse)
 async def documents_route(req: DocumentLoadRequest):
     local_file_path = await _get_local_file_path(req.file_url)
     if not local_file_path or len(local_file_path) == 0:

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, FastAPI
 
-from .documents_route import router as documents_router
+from .documents_route import documents_router
 from .statics_route import static_files
 
 api_router = APIRouter(prefix="/api")
