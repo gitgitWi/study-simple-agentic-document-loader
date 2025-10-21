@@ -1,6 +1,12 @@
 {
+  "[css]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
   "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.sort.json": "explicit"
+    },
+    "editor.defaultFormatter": "biomejs.biome",
     "editor.indentSize": "tabSize",
     "editor.quickSuggestions": {
       "strings": true
@@ -9,15 +15,37 @@
     "editor.tabSize": 2
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "biomejs.biome"
   },
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": "explicit",
-    "source.organizeImports.ruff": "explicit",
-    "source.sort.json": "explicit"
+  "[python]": {
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.ruff": "explicit"
+    },
+    "editor.defaultColorDecorators": "never",
+    "editor.quickSuggestions": {
+      "strings": true
+    },
+    "editor.wordBasedSuggestions": "off",
+    "gitlens.codeLens.symbolScopes": [
+      "!Module"
+    ]
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "biomejs.biome"
+  },
+  "[typescriptreact]": {
+    "editor.codeActionsOnSave": {
+      "source.organizeImports.biome": "explicit",
+      "source.removeUnusedImports": "explicit"
+    },
+    "editor.defaultFormatter": "biomejs.biome"
   },
   "editor.defaultFormatter": "charliermarsh.ruff",
   "editor.formatOnSave": true,
+  "files.associations": {
+    "*.css": "tailwindcss"
+  },
   "files.autoSave": "onFocusChange",
   "notebook.defaultFormatter": "charliermarsh.ruff"
 }
