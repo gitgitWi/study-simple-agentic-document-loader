@@ -1,9 +1,14 @@
-import './app.css';
+import { Files } from './features/files';
 
 export function App() {
   return (
-    <>
-      <h1>Hello World</h1>
-    </>
+    <main class="flex flex-col justify-start items-center p-4">
+      <h1 class="font-bold text-3xl">Documents Loader</h1>
+
+      <Files.ContextProvider>
+        <Files.Upload />
+        <Files.Table />
+      </Files.ContextProvider>
+    </main>
   );
 }
