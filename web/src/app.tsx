@@ -5,10 +5,10 @@ export function App() {
     <main class="flex flex-col justify-start items-center p-4">
       <h1 class="font-bold text-3xl">Documents Loader</h1>
 
-      <Files.ContextProvider>
+      <Files.Root>
         <Files.Upload />
         <Files.Table />
-      </Files.ContextProvider>
+      </Files.Root>
     </main>
   );
 }
