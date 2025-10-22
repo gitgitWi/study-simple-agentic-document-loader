@@ -8,12 +8,11 @@ import { fetchLoadDocuments } from '~/features/document-loader';
 import { cn } from '~/utils/class-names';
 import { convertSize } from './convert-size';
 import type { AllowedExtension } from './document.types';
+import { documentsStore } from './documents-store';
 import { fetchGetSasUrl, fetchUploadFile } from './fetcher';
-import { documentsStore } from './use-documents';
 
 export function DocumentUpload() {
   const inputRef = useRef<HTMLInputElement>(null);
-  const { addDocument } = documentsStore.getState();
 
   const handleSubmit = useCallback<SubmitEventHandler<HTMLFormElement>>((e) => {
     e.preventDefault();
@@ -23,7 +22,7 @@ export function DocumentUpload() {
     (_e) => {
       inputRef.current?.click();
     },
-    [inputRef]
+    []
   );
 
   const handleChange = useCallback<InputEventHandler<HTMLInputElement>>(
@@ -53,7 +52,12 @@ export function DocumentUpload() {
         fileExtension: fileExtension as AllowedExtension,
       })) ?? { pages: [] };
 
-      addDocument({
+      if (pages.length === 0) {
+        console.warn('Failed to load document', { fileUrl, fileExtension });
+        return;
+      }
+
+      documentsStore.addDocument({
         id: fileId,
         name: file.name,
         size: file.size,
@@ -66,7 +70,7 @@ export function DocumentUpload() {
         })),
       });
     },
-    [inputRef]
+    []
   );
 
   return (
