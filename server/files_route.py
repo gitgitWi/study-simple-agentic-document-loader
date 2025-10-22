@@ -22,6 +22,7 @@ class GetSASUrlRequest(BaseModel):
 
 
 class GetSASUrlResponse(BaseModel):
+    file_id: str = Field(..., description="File ID")
     upload_url: str = Field(..., description="Upload SAS URL")
     download_url: str = Field(..., description="Download URL")
 
@@ -33,7 +34,9 @@ files_router = APIRouter(prefix="/files")
 async def get_sas_url(request: GetSASUrlRequest):
     start_time = datetime.datetime.now(datetime.timezone.utc)
     expiry_time = start_time + datetime.timedelta(minutes=5)
-    file_name = f".samples/{ULID()}.{request.file_extension}"
+
+    file_id = str(ULID())
+    file_name = f".samples/{file_id}.{request.file_extension}"
 
     sas_token = generate_blob_sas(
         account_name=envs.azure_blob_account_name,
@@ -51,6 +54,7 @@ async def get_sas_url(request: GetSASUrlRequest):
     upload_url = f"{file_url}?{sas_token}"
 
     return GetSASUrlResponse(
+        file_id=file_id,
         upload_url=upload_url,
         download_url=file_url,
     )

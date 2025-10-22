@@ -1,6 +1,7 @@
-import type { AllowedExtension } from './types';
+import type { AllowedExtension } from './document.types';
 
 type GetSASUrlResponse = {
+  file_id: string;
   upload_url: string;
   download_url: string;
 };
