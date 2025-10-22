@@ -1,12 +1,12 @@
 import type { AllowedExtension } from '~/features/files';
 
-export type DocumentLoaded = {
+type PageLoaderResult = {
   page_content: string;
   page_number: number;
 };
 
-type DocumentLoadResponse = {
-  documents: DocumentLoaded[];
+type DocumentLoaderResponse = {
+  pages: PageLoaderResult[];
 };
 
 export const fetchLoadDocuments = async ({
@@ -25,5 +25,5 @@ export const fetchLoadDocuments = async ({
     },
     body: JSON.stringify({ file_url: fileUrl, file_extension: fileExtension }),
   });
-  return response.json() as Promise<DocumentLoadResponse | undefined>;
+  return response.json() as Promise<DocumentLoaderResponse | undefined>;
 };

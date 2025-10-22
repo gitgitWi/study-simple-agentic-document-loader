@@ -1,1 +1,1 @@
-export { type DocumentLoaded, fetchLoadDocuments } from './fetcher';
+export { fetchLoadDocuments } from './fetcher';

@@ -34,7 +34,7 @@ class LoadedDocument(BaseModel):
 
 
 class DocumentLoadResponse(BaseModel):
-    documents: List[LoadedDocument]
+    pages: List[LoadedDocument]
 
 
 @documents_router.post("/documents", response_model=DocumentLoadResponse)
@@ -52,14 +52,14 @@ async def documents_route(req: DocumentLoadRequest):
                 detail=f"Not Implemented: .{req.file_extension}",
             )
 
-    documents = await loader.aload()
+    pages = await loader.aload()
 
     result = [
         LoadedDocument(page_content=doc.page_content, page_number=number)
-        for number, doc in enumerate(documents)
+        for number, doc in enumerate(pages)
     ]
 
-    return DocumentLoadResponse(documents=result)
+    return DocumentLoadResponse(pages=result)
 
 
 async def _get_local_file_path(file_url: str | HttpUrl) -> str:
