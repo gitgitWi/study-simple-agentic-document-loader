@@ -1,8 +1,10 @@
 import { FileType2, Trash2 } from 'lucide-preact';
 import { createPortal } from 'preact/compat';
 import { useCallback, useState } from 'preact/hooks';
+import { DISK_SIZES } from './convert-size';
 import type { DocumentLoaded } from './document.types';
 import { documentsStore } from './documents-store';
+import { downloadResult } from './download-result';
 
 export function DocumentsTable() {
   return (
@@ -32,8 +34,20 @@ function DocumentTableRow({ document }: { document: DocumentLoaded }) {
   const [isDocumentVisible, setIsDocumentVisible] = useState(false);
 
   const showDocument = useCallback(() => {
+    const file = new Blob(
+      [document.pages.map((page) => page.content).join('')],
+      { type: 'text/plain;charset=utf-8' }
+    );
+
+    if (file.size > DISK_SIZES.MB * 2) {
+      const fileUrl = window.URL.createObjectURL(file);
+      downloadResult({ fileUrl, fileName: 'loaded-document.txt' });
+      window.URL.revokeObjectURL(fileUrl);
+      return;
+    }
+
     setIsDocumentVisible(true);
-  }, []);
+  }, [document.pages]);
 
   const hideDocument = useCallback(() => {
     setIsDocumentVisible(false);
