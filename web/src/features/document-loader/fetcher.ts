@@ -1,4 +1,4 @@
-import type { AllowedExtension } from '~/features/files';
+import type { AllowedExtension } from '~/features/documents';
 
 type PageLoaderResult = {
   page_content: string;

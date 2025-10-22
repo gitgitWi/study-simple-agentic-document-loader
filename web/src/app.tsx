@@ -1,4 +1,4 @@
-import { Files } from './features/files';
+import { Files } from './features/documents';
 
 export function App() {
   return (
