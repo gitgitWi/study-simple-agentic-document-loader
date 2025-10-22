@@ -4,9 +4,8 @@ import httpx
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
-from features.document_loaders import HWPLoader
-from features.document_loaders.file_extensions import (
-    AllowedExtension,
+from features.document_loaders import (
+    get_loader,
     is_valid_extension,
 )
 
@@ -43,14 +42,12 @@ async def documents_route(req: DocumentLoadRequest):
     if not local_file_path or len(local_file_path) == 0:
         raise HTTPException(status_code=400, detail="Invalid file URL")
 
-    match req.file_extension:
-        case AllowedExtension.HWP:
-            loader = HWPLoader(local_file_path)
-        case _:
-            raise HTTPException(
-                status_code=400,
-                detail=f"Not Implemented: .{req.file_extension}",
-            )
+    loader = get_loader(req.file_extension, local_file_path)
+    if not loader:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Not Implemented: .{req.file_extension}",
+        )
 
     pages = await loader.aload()
 
