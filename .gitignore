@@ -14,5 +14,5 @@ wheels/
 .env*
 !.env.sample
 
-features/document_loaders/.sample_files
-
+.sample_files/
+downloads/
