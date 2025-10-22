@@ -34,8 +34,16 @@
     }
   },
   "linter": {
+    "domains": {
+      "react": "recommended"
+    },
     "enabled": true,
     "rules": {
+      "a11y": {
+        "noStaticElementInteractions": "info",
+        "useKeyWithClickEvents": "warn",
+        "useKeyWithMouseEvents": "warn"
+      },
       "recommended": true
     }
   }
