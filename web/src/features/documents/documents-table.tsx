@@ -128,7 +128,7 @@ function DocumentViewerModal({
       >
         <h3 class="font-bold text-lg">{document.name}</h3>
 
-        <section>
+        <section class="flex flex-col w-full gap-2">
           {document.pages.map((page) => (
             <div
               key={page.number}
