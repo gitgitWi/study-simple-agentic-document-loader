@@ -1,6 +1,11 @@
 const BYTES_PER_KB = 1024;
 const BYTES_PER_MB = BYTES_PER_KB * 1024;
 
+export const DISK_SIZES = {
+  KB: BYTES_PER_KB,
+  MB: BYTES_PER_MB,
+} as const;
+
 export const convertSize = (size: number) => {
   if (size < BYTES_PER_KB) {
     return `< 1 KB`;
