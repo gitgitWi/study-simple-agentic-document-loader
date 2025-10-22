@@ -1,4 +1,4 @@
-import { FileType2 } from 'lucide-preact';
+import { FileType2, Trash2 } from 'lucide-preact';
 import { createPortal } from 'preact/compat';
 import { useCallback, useState } from 'preact/hooks';
 import type { DocumentLoaded } from './document.types';
@@ -7,15 +7,15 @@ import { documentsStore } from './documents-store';
 export function DocumentsTable() {
   return (
     <div class="flex flex-col gap-2 w-full">
-      <h2 class="font-bold text-2xl">Files</h2>
+      <h2 class="font-bold text-xl">Files</h2>
 
       <table class="w-full">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Type</th>
-            <th>Size</th>
-            <th>Actions</th>
+        <thead class="border-neutral-400/90 border-b">
+          <tr class="">
+            <th class="py-2">Name</th>
+            <th class="py-2">Type</th>
+            <th class="py-2">Size</th>
+            <th class="py-2">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -39,21 +39,21 @@ function DocumentTableRow({ document }: { document: DocumentLoaded }) {
     setIsDocumentVisible(false);
   }, []);
 
+  const removeDocument = useCallback(() => {
+    documentsStore.removeDocument(document.id);
+  }, [document.id]);
+
   return (
     <>
-      <tr>
-        <td>{document.name}</td>
-        <td>{document.type}</td>
-        <td>{document.sizeDisplay}</td>
-
-        <td>
-          <button
-            type="button"
-            onClick={showDocument}
-            class="hover:bg-neutral-700/25 p-2 rounded-md cursor-pointer"
-          >
-            <FileType2 />
-          </button>
+      <tr class="text-sm">
+        <td class="py-2 overflow-hidden text-ellipsis whitespace-nowrap">
+          {document.name}
+        </td>
+        <td class="py-2 font-mono text-center">{document.type}</td>
+        <td class="py-2 font-mono text-right">{document.sizeDisplay}</td>
+        <td class="py-2 text-center">
+          <ShowDocumentButton showDocument={showDocument} />
+          <RemoveDocumentButton removeDocument={removeDocument} />
         </td>
       </tr>
 
@@ -61,6 +61,34 @@ function DocumentTableRow({ document }: { document: DocumentLoaded }) {
         <DocumentViewerModal document={document} hideDocument={hideDocument} />
       )}
     </>
+  );
+}
+
+function ShowDocumentButton({ showDocument }: { showDocument: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={showDocument}
+      class="hover:bg-neutral-700/25 p-1 rounded-md cursor-pointer"
+    >
+      <FileType2 size={16} />
+    </button>
+  );
+}
+
+function RemoveDocumentButton({
+  removeDocument,
+}: {
+  removeDocument: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={removeDocument}
+      class="hover:bg-rose-700/25 p-1 rounded-md cursor-pointer"
+    >
+      <Trash2 size={16} class="text-rose-400" />
+    </button>
   );
 }
 
