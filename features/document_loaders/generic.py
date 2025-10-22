@@ -1,6 +1,6 @@
 from typing import Literal, NotRequired, TypedDict
 
-from langchain_community.document_loaders import CloudBlobLoader
+from langchain_community.document_loaders import FileSystemBlobLoader
 from langchain_community.document_loaders.generic import GenericLoader
 from langchain_community.document_loaders.parsers import (
     LLMImageBlobParser,
@@ -11,7 +11,7 @@ from features.llms import ModelConfigs, ModelNames, get_model
 
 from .file_extensions import AllowedExtension
 
-image_model = get_model(ModelNames.GPT_5_MINI, ModelConfigs(max_tokens=4096))
+image_model = get_model(ModelNames.CLAUDE_HAIKU_4_5, ModelConfigs(max_tokens=4096))
 
 
 class ParserSettings(TypedDict):
@@ -33,11 +33,11 @@ PARSER_SETTINGS: dict[AllowedExtension, ParserSettings] = {
 }
 
 
-def get_generic_loader(file_url: str, file_extension: str) -> GenericLoader | None:
+def get_generic_loader(file_path: str, file_extension: str) -> GenericLoader | None:
     match file_extension:
         case AllowedExtension.PDF:
             return GenericLoader(
-                blob_loader=CloudBlobLoader(file_url),
+                blob_loader=FileSystemBlobLoader(file_path),
                 blob_parser=PyMuPDFParser(
                     **PARSER_SETTINGS[AllowedExtension.PDF],
                 ),
