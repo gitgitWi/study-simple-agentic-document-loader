@@ -6,7 +6,7 @@ import type {
 import { useCallback, useRef } from 'preact/hooks';
 import { cn } from '~/utils/class-names';
 import { convertSize } from './convert-size';
-import { type AllowedExtension, DocumentStatus } from './document.types';
+import { type AllowedExtension, DOCUMENT_STATUS } from './document.types';
 import { documentsStore } from './documents-store';
 import { fetchGetSasUrl, fetchUploadFile } from './fetcher';
 
@@ -56,7 +56,7 @@ export function DocumentUpload() {
         sizeDisplay: convertSize(file.size),
         type: fileExtension as AllowedExtension,
         url: fileUrl,
-        status: DocumentStatus.INITIAL,
+        status: DOCUMENT_STATUS.INITIAL,
         pages: [],
       });
     },
