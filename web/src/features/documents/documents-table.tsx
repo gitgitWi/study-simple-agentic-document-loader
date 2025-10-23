@@ -1,8 +1,19 @@
-import { FileType2, Trash2 } from 'lucide-preact';
+import {
+  CircleCheck,
+  CircleDashed,
+  CircleX,
+  FileType2,
+  Loader,
+  Trash2,
+} from 'lucide-preact';
 import { createPortal } from 'preact/compat';
 import { useCallback, useState } from 'preact/hooks';
 import { DISK_SIZES } from './convert-size';
-import type { DocumentLoaded } from './document.types';
+import {
+  DOCUMENT_STATUS,
+  type DocumentLoaded,
+  type DocumentStatus,
+} from './document.types';
 import { documentsStore } from './documents-store';
 import { downloadResult } from './download-result';
 
@@ -14,6 +25,7 @@ export function DocumentsTable() {
       <table class="w-full">
         <thead class="border-neutral-400/90 border-b">
           <tr class="">
+            <th class="py-2">Status</th>
             <th class="py-2">Name</th>
             <th class="py-2">Type</th>
             <th class="py-2">Size</th>
@@ -60,6 +72,9 @@ function DocumentTableRow({ document }: { document: DocumentLoaded }) {
   return (
     <>
       <tr class="text-sm">
+        <td class="flex justify-center items-center py-2 overflow-hidden text-ellipsis whitespace-nowrap">
+          <DocumentStatusIcon status={document.status} />
+        </td>
         <td class="py-2 overflow-hidden text-ellipsis whitespace-nowrap">
           {document.name}
         </td>
@@ -76,6 +91,19 @@ function DocumentTableRow({ document }: { document: DocumentLoaded }) {
       )}
     </>
   );
+}
+
+function DocumentStatusIcon({ status }: { status: DocumentStatus }) {
+  if (status === DOCUMENT_STATUS.LOADING) {
+    return <Loader class="animate-spin duration-200 repeat-infinite" />;
+  }
+  if (status === DOCUMENT_STATUS.FINISHED) {
+    return <CircleCheck class="text-green-400" />;
+  }
+  if (status === DOCUMENT_STATUS.ERROR) {
+    return <CircleX class="text-rose-400" />;
+  }
+  return <CircleDashed class="text-neutral-400" />;
 }
 
 function ShowDocumentButton({ showDocument }: { showDocument: () => void }) {
@@ -128,7 +156,7 @@ function DocumentViewerModal({
       >
         <h3 class="font-bold text-lg">{document.name}</h3>
 
-        <section class="flex flex-col w-full gap-2">
+        <section class="flex flex-col gap-2 w-full">
           {document.pages.map((page) => (
             <div
               key={page.number}
