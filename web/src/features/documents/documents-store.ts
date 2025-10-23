@@ -16,6 +16,15 @@ const createDocumentsSignal = () => {
     documents.value = documents.value.concat([document]);
   };
 
+  const updateDocument = (
+    id: string,
+    documentUpdates: Partial<DocumentLoaded>
+  ) => {
+    documents.value = documents.value.map((d) =>
+      d.id === id ? Object.assign({}, d, documentUpdates) : d
+    );
+  };
+
   const removeDocument = (id: string) => {
     documents.value = documents.value.filter((document) => document.id !== id);
   };
@@ -33,6 +42,7 @@ const createDocumentsSignal = () => {
   return {
     documents,
     addDocument,
+    updateDocument,
     removeDocument,
   };
 };
