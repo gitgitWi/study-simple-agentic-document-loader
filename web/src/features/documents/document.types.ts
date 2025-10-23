@@ -21,6 +21,13 @@ export type PageLoaded = {
   content: string;
 };
 
+export const DocumentStatus = {
+  INITIAL: 'INITIAL',
+  LOADING: 'LOADING',
+  FINISHED: 'FINISHED',
+  ERROR: 'ERROR',
+} as const;
+
 export type DocumentLoaded = {
   id: string;
   name: string;
@@ -28,5 +35,6 @@ export type DocumentLoaded = {
   sizeDisplay: string;
   type: AllowedExtension;
   url: string;
+  status: (typeof DocumentStatus)[keyof typeof DocumentStatus];
   pages: PageLoaded[];
 };
