@@ -4,10 +4,9 @@ import type {
   SubmitEventHandler,
 } from 'preact';
 import { useCallback, useRef } from 'preact/hooks';
-import { fetchLoadDocuments } from '~/features/document-loader';
 import { cn } from '~/utils/class-names';
 import { convertSize } from './convert-size';
-import type { AllowedExtension } from './document.types';
+import { type AllowedExtension, DocumentStatus } from './document.types';
 import { documentsStore } from './documents-store';
 import { fetchGetSasUrl, fetchUploadFile } from './fetcher';
 
@@ -45,15 +44,8 @@ export function DocumentUpload() {
       }
 
       const isSuccess = await fetchUploadFile(file, uploadUrl);
-      if (!isSuccess) return;
-
-      const { pages = [] } = (await fetchLoadDocuments({
-        fileUrl,
-        fileExtension: fileExtension as AllowedExtension,
-      })) ?? { pages: [] };
-
-      if (pages.length === 0) {
-        console.warn('Failed to load document', { fileUrl, fileExtension });
+      if (!isSuccess) {
+        window.alert('Failed to upload file');
         return;
       }
 
@@ -64,10 +56,8 @@ export function DocumentUpload() {
         sizeDisplay: convertSize(file.size),
         type: fileExtension as AllowedExtension,
         url: fileUrl,
-        pages: pages.map(({ page_content, page_number }) => ({
-          number: page_number,
-          content: page_content,
-        })),
+        status: DocumentStatus.INITIAL,
+        pages: [],
       });
     },
     []
