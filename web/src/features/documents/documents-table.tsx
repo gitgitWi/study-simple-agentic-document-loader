@@ -2,12 +2,14 @@ import {
   CircleCheck,
   CircleDashed,
   CircleX,
+  FileDown,
   FileType2,
   Loader,
   Trash2,
 } from 'lucide-preact';
 import { createPortal } from 'preact/compat';
 import { useCallback, useState } from 'preact/hooks';
+import { fetchLoadDocuments } from '~/features/document-loader';
 import { DISK_SIZES } from './convert-size';
 import {
   DOCUMENT_STATUS,
@@ -61,6 +63,43 @@ function DocumentTableRow({ document }: { document: DocumentLoaded }) {
     setIsDocumentVisible(true);
   }, [document.pages]);
 
+  const loadDocument = useCallback(async () => {
+    documentsStore.updateDocument(document.id, {
+      status: DOCUMENT_STATUS.LOADING,
+    });
+
+    try {
+      const response = await fetchLoadDocuments({
+        fileUrl: document.url,
+        fileExtension: document.type,
+        parserOptions: {
+          pdfParser: 'pypdfium2',
+          imageModel: 'claude-haiku',
+        },
+      });
+
+      if (!response) {
+        documentsStore.updateDocument(document.id, {
+          status: DOCUMENT_STATUS.ERROR,
+        });
+        return;
+      }
+
+      documentsStore.updateDocument(document.id, {
+        status: DOCUMENT_STATUS.FINISHED,
+        pages: response.pages.map((page) => ({
+          number: page.page_number,
+          content: page.page_content,
+        })),
+      });
+    } catch (error) {
+      documentsStore.updateDocument(document.id, {
+        status: DOCUMENT_STATUS.ERROR,
+      });
+      console.error(error);
+    }
+  }, [document.id, document.url, document.type]);
+
   const hideDocument = useCallback(() => {
     setIsDocumentVisible(false);
   }, []);
@@ -81,6 +120,7 @@ function DocumentTableRow({ document }: { document: DocumentLoaded }) {
         <td class="py-2 font-mono text-center">{document.type}</td>
         <td class="py-2 font-mono text-right">{document.sizeDisplay}</td>
         <td class="py-2 text-center">
+          <LoadDocumentButton loadDocument={loadDocument} />
           <ShowDocumentButton showDocument={showDocument} />
           <RemoveDocumentButton removeDocument={removeDocument} />
         </td>
@@ -104,6 +144,18 @@ function DocumentStatusIcon({ status }: { status: DocumentStatus }) {
     return <CircleX class="text-rose-400" />;
   }
   return <CircleDashed class="text-neutral-400" />;
+}
+
+function LoadDocumentButton({ loadDocument }: { loadDocument: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={loadDocument}
+      class="hover:bg-neutral-700/25 p-1 rounded-md cursor-pointer"
+    >
+      <FileDown size={16} />
+    </button>
+  );
 }
 
 function ShowDocumentButton({ showDocument }: { showDocument: () => void }) {
