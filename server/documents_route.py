@@ -5,6 +5,8 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field, HttpUrl, field_validator
 
 from features.document_loaders import (
+    DEFAULT_PARSER_OPTIONS,
+    ParserOptions,
     get_loader,
     is_valid_extension,
 )
@@ -17,6 +19,10 @@ class DocumentLoadRequest(BaseModel):
     file_extension: str = Field(
         ...,
         description="File extension",
+    )
+    parser_options: ParserOptions = Field(
+        default=DEFAULT_PARSER_OPTIONS,
+        description="Parser options",
     )
 
     @field_validator("file_extension")
@@ -42,7 +48,11 @@ async def documents_route(req: DocumentLoadRequest):
     if not local_file_path or len(local_file_path) == 0:
         raise HTTPException(status_code=400, detail="Invalid file URL")
 
-    loader = get_loader(req.file_extension, local_file_path)
+    loader = get_loader(
+        req.file_extension,
+        local_file_path,
+        (req.parser_options | DEFAULT_PARSER_OPTIONS),
+    )
     if not loader:
         raise HTTPException(
             status_code=400,
