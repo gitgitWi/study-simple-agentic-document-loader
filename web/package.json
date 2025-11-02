@@ -18,6 +18,7 @@
     "vite": "^7.1.7"
   },
   "name": "web",
+  "packageManager": "pnpm@10.20.0",
   "private": true,
   "scripts": {
     "build": "tsc -b && vite build",
