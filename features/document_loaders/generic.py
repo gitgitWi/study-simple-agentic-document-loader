@@ -9,7 +9,7 @@ from langchain_community.document_loaders.parsers import (
     PyPDFium2Parser,
 )
 
-from features.llms import ModelConfigs, ModelNames, get_model
+from features.llms import ModelNames
 
 from .file_extensions import AllowedExtension
 from .image_parser import LLMImageBlobParser
@@ -26,7 +26,7 @@ class ParserSettings(TypedDict):
 PARSER_SETTINGS: dict[AllowedExtension, ParserSettings] = {
     AllowedExtension.PDF: ParserSettings(
         mode="page",
-        extract_images=True,
+        extract_images=False,
         images_inner_format="markdown-img",
     ),
 }
@@ -82,10 +82,6 @@ def get_generic_loader(
 ) -> GenericLoader | None:
     match file_extension:
         case AllowedExtension.PDF:
-            image_model = get_model(
-                get_image_model_name(parser_options.get("image_model")),
-                ModelConfigs(max_tokens=4096),
-            )
             pdf_parser = get_pdf_parser(parser_options.get("pdf_parser"))
 
             pdf_parser_settings = PARSER_SETTINGS[AllowedExtension.PDF]
@@ -94,12 +90,7 @@ def get_generic_loader(
 
             return GenericLoader(
                 blob_loader=FileSystemBlobLoader(file_path),
-                blob_parser=pdf_parser(
-                    images_parser=LLMImageBlobParser(model=image_model)
-                    if image_model
-                    else None,
-                    **(pdf_parser_settings),
-                ),
+                blob_parser=pdf_parser(**(pdf_parser_settings), images_parser=None),
             )
         case _:
             return None
