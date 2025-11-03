@@ -2,12 +2,8 @@ FROM node:22-alpine AS web-builder
 
 WORKDIR /app/web
 
-# Preload lockfile metadata for better caching
-COPY web/pnpm-lock.yaml web/package.json web/pnpm-workspace.yaml ./
+COPY web/ ./
 RUN corepack enable && pnpm install --frozen-lockfile
-
-# Build static assets
-COPY --exclude=node_modules --exclude=dist web/ ./
 RUN pnpm build
 
 FROM python:3.12-slim AS runner
