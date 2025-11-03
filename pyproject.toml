@@ -27,6 +27,7 @@ dependencies = [
 [tool.taskipy.tasks]
 # `uv run task dev`
 dev = "uvicorn server:app --host localhost --port 8000 --reload"
+start = "uvicorn server:app --port 8000"
 
 [dependency-groups]
 dev = ["taskipy>=1.14.1"]

@@ -30,4 +30,4 @@ COPY --from=web-builder /app/web/dist web/dist
 
 EXPOSE 8000
 
-CMD ["uv", "run", "task", "dev"]
+CMD ["uv", "run", "task", "start"]
